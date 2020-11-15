@@ -1,0 +1,24 @@
+name: DiamondHunter
+main: uk.co.joshuawoolley.diamondhunter.DiamondHunter
+version: 3.0.2.1
+
+commands:
+  dh:
+        description: Access to all the Diamond Hunter commands
+        usage: /<command>
+
+permissions:
+    dh.getnotice:
+         description: Gives the user the notices of when someone breaks a Diamond Ore
+         default: op
+    dh.reload:
+         description: Allows the user to reload DiamondHunter
+         default: op
+    dh.exempt:
+         description: Stops the user from announcing their mining
+         default: op 
+    dh.report:
+         description: Access to view player reports
+         default: op
+
+api-version: 1.16

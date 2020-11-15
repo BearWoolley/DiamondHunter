@@ -1,6 +1,6 @@
 name: DiamondHunter
 main: uk.co.joshuawoolley.diamondhunter.DiamondHunter
-version: 3.0.2.1
+version: 3.0.2
 
 commands:
   dh:

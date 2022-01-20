@@ -85,7 +85,9 @@ public class BlockBreakHandler implements Listener {
 		if(b.getType() != m) { return; }
 		
 		if(collected.contains(b)) { return; }
-		
+		if(collected.size()>20) {
+			return;
+		}
 		collected.add(b);
 		whitelist.add(b);
 		

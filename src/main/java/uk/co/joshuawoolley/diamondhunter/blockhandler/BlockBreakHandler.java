@@ -1,7 +1,9 @@
 package uk.co.joshuawoolley.diamondhunter.blockhandler;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -27,11 +29,14 @@ public class BlockBreakHandler implements Listener {
 	private BroadcastHandler bh;
 	private Queries query;
 	
+	private Map<String,Long> last = new HashMap<String,Long>();
 	private HashSet<Block> vein;
 	private HashSet<Block> whitelist;
 	
 	public BlockBreakHandler(DiamondHunter instance, BroadcastHandler bh, Queries q) {
 		plugin = instance;
+
+		last.put("a",1l);
 		this.bh = bh;
 		whitelist = new HashSet<Block>();
 		
@@ -52,6 +57,14 @@ public class BlockBreakHandler implements Listener {
 			if (!plugin.getConfig().getBoolean("logCreative") && p.getGameMode() == GameMode.CREATIVE) {
 				return;
 			} else {
+				
+				//Should fix spammy
+				//or you know, break all the shit
+				String name= p.getName();
+				if(!last.containsKey(name)) last.put(name, System.currentTimeMillis());
+				else if(System.currentTimeMillis()-last.get(name)<=60000) return;
+				last.replace(name, System.currentTimeMillis());
+				
 				List<String> blocks = plugin.getConfig().getStringList("blocks");
 				for (String s : blocks) {
 					if (b.getType()==Material.getMaterial(s.toUpperCase())) {

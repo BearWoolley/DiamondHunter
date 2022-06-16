@@ -72,7 +72,7 @@ public class BlockBreakHandler implements Listener {
 						if (!whitelist.contains(b)) {
 							vein.clear();
 							countBlocks(b.getType(), b, vein);
-							bh.printNotice(p.getDisplayName(), vein.size(), b);
+							bh.printNotice(p.getName(), vein.size(), b);
 
 							logBreak(b, p);
 						} else {

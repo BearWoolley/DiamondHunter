@@ -25,7 +25,7 @@ public class BroadcastHandler {
 	}
 	
 	@SuppressWarnings("static-access")
-	public void printNotice(String player, int amount, Block b) {
+	public void printNotice(Player  player, int amount, Block b) {
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 			if(p.hasPermission("dh.getnotice")) {
 				if(!disabled.contains(p.getName())){
@@ -33,7 +33,10 @@ public class BroadcastHandler {
 					String tag = dh.messageData.get("tag");
 					String message = dh.messageData.get("adminNotice");
 					if (message.contains("%player")) {
-						message = message.replace("%player", player);
+						message = message.replace("%player", player.getName());
+					}
+					if (message.contains("%nick")) {
+						message = message.replace("%displayplayer", player.getDisplayName());
 					}
 					if (message.contains("%amount")) {
 						message = message.replace("%amount",String.valueOf(amount));

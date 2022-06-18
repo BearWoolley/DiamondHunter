@@ -35,7 +35,7 @@ public class BroadcastHandler {
 					if (message.contains("%player")) {
 						message = message.replace("%player", player.getName());
 					}
-					if (message.contains("%nick")) {
+					if (message.contains("%displayplayer")) {
 						message = message.replace("%displayplayer", player.getDisplayName());
 					}
 					if (message.contains("%amount")) {

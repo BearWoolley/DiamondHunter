@@ -1,9 +1,12 @@
 package uk.co.joshuawoolley.diamondhunter.blockhandler;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -26,11 +29,14 @@ public class BlockBreakHandler implements Listener {
 	private BroadcastHandler bh;
 	private Queries query;
 	
+	private Map<String,Long> last = new HashMap<String,Long>();
 	private HashSet<Block> vein;
 	private HashSet<Block> whitelist;
 	
 	public BlockBreakHandler(DiamondHunter instance, BroadcastHandler bh, Queries q) {
 		plugin = instance;
+
+		last.put("a",1l);
 		this.bh = bh;
 		whitelist = new HashSet<Block>();
 		
@@ -42,7 +48,6 @@ public class BlockBreakHandler implements Listener {
 	 * @param event
 	 * 			The break event
 	 */
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player p = event.getPlayer();
@@ -52,14 +57,22 @@ public class BlockBreakHandler implements Listener {
 			if (!plugin.getConfig().getBoolean("logCreative") && p.getGameMode() == GameMode.CREATIVE) {
 				return;
 			} else {
+				
+				//Should fix spammy
+				//or you know, break all the shit
+				String name= p.getName();
+				if(!last.containsKey(name)) last.put(name, System.currentTimeMillis());
+				else if(System.currentTimeMillis()-last.get(name)<=60000) return;
+				last.replace(name, System.currentTimeMillis());
+				
 				List<String> blocks = plugin.getConfig().getStringList("blocks");
 				for (String s : blocks) {
-					if (s.equals(String.valueOf(b.getTypeId()))) {
+					if (b.getType()==Material.getMaterial(s.toUpperCase())) {
 						vein = new HashSet<Block>();
 						if (!whitelist.contains(b)) {
 							vein.clear();
-							countBlocks(b.getTypeId(), b, vein);
-							bh.printNotice(p.getDisplayName(), vein.size(), b);
+							countBlocks(b.getType(), b, vein);
+							bh.printNotice(p, vein.size(), b);
 
 							logBreak(b, p);
 						} else {
@@ -81,33 +94,34 @@ public class BlockBreakHandler implements Listener {
 	 * @param collected
 	 * 			The HashSet that block should be added to
 	 */
-	@SuppressWarnings("deprecation")
-	private void countBlocks(int id, Block b, HashSet<Block> collected) {
-		if(b.getTypeId() != id) { return; }
+	private void countBlocks(Material m, Block b, HashSet<Block> collected) {
+		if(b.getType() != m) { return; }
 		
 		if(collected.contains(b)) { return; }
-		
+		if(collected.size()>20) {
+			return;
+		}
 		collected.add(b);
 		whitelist.add(b);
 		
-		countBlocks(id, b.getRelative(BlockFace.DOWN), collected);
-		countBlocks(id, b.getRelative(BlockFace.EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.EAST_NORTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.EAST_SOUTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.NORTH), collected);
-		countBlocks(id, b.getRelative(BlockFace.NORTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.NORTH_NORTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.NORTH_NORTH_WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.NORTH_WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.SOUTH), collected);
-		countBlocks(id, b.getRelative(BlockFace.SOUTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.SOUTH_SOUTH_EAST), collected);
-		countBlocks(id, b.getRelative(BlockFace.SOUTH_SOUTH_WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.SOUTH_WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.UP), collected);
-		countBlocks(id, b.getRelative(BlockFace.WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.WEST_NORTH_WEST), collected);
-		countBlocks(id, b.getRelative(BlockFace.WEST_SOUTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.DOWN), collected);
+		countBlocks(m, b.getRelative(BlockFace.EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.EAST_NORTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.EAST_SOUTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.NORTH), collected);
+		countBlocks(m, b.getRelative(BlockFace.NORTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.NORTH_NORTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.NORTH_NORTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.NORTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.SOUTH), collected);
+		countBlocks(m, b.getRelative(BlockFace.SOUTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.SOUTH_SOUTH_EAST), collected);
+		countBlocks(m, b.getRelative(BlockFace.SOUTH_SOUTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.SOUTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.UP), collected);
+		countBlocks(m, b.getRelative(BlockFace.WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.WEST_NORTH_WEST), collected);
+		countBlocks(m, b.getRelative(BlockFace.WEST_SOUTH_WEST), collected);
 	}
 	
 	/**

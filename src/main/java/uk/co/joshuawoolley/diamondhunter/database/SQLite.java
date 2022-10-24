@@ -9,8 +9,6 @@ import java.util.logging.Level;
 
 import org.bukkit.plugin.Plugin;
 
-import uk.co.joshuawoolley.diamondhunter.database.Database;
-
 /**
  * @author Josh Woolley
  * Connects to and uses a SQLite database

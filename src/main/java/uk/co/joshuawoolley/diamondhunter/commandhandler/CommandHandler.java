@@ -87,6 +87,7 @@ public class CommandHandler implements CommandExecutor {
 					if (p.hasPermission("dh.report")) {
 						if (args.length > 1) {
 							String name = args[1];
+							@SuppressWarnings("deprecation")
 							UUID id = Bukkit.getServer().getOfflinePlayer(name)
 									.getUniqueId();
 							String uuid = id.toString();
